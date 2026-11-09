@@ -3,7 +3,7 @@
 --
 --  Organização:
 --    Bloco 0 - Dados comuns a todas as clínicas (grupo)
---    Bloco 1 - Clínica de Lisboa  (Jorge Gonçalves, A52345)
+--    Bloco 1 - Clínica do Montijo  (Jorge Gonçalves, A52345)
 --    Bloco 2 - Clínica de Guimaraes (Helena Nina, A52708)
 --    Bloco 3 - Clínica de Sintra  (Margarida Andrade, A52146)
 --
@@ -75,6 +75,133 @@ INSERT INTO Alergenio (designacao, tipo) VALUES
 
 
 -- BLOCO 1 - CLÍNICA Jorge Gonçalves (A52345)
+-- Clínica e horário (dias úteis, das 09:00 às 18:00)
+INSERT INTO Clinica (localidade, morada, latitude, longitude) VALUES
+    ('Montijo', 'Rua das Papoilas', 38.71152, -8.98198);
+
+INSERT INTO Horario (localidade, diaSemana, horaAbertura, horaFecho) VALUES
+    ('Montijo', 'segunda', '09:00', '18:00'),
+    ('Montijo', 'terça',   '09:00', '18:00'),
+    ('Montijo', 'quarta',  '09:00', '18:00'),
+    ('Montijo', 'quinta',  '09:00', '18:00'),
+    ('Montijo', 'sexta',   '09:00', '18:00');
+
+-- Tipos de cuidado disponíveis: consultas (1) e atos de enfermagem (5)
+INSERT INTO Disponibilizar (localidade, diaSemana, codTipoCuidado) VALUES
+    ('Montijo', 'segunda', 1), ('Montijo', 'segunda', 5),
+    ('Montijo', 'terça',   1), ('Montijo', 'terça',   5),
+    ('Montijo', 'quarta',  1), ('Montijo', 'quarta',  5),
+    ('Montijo', 'quinta',  1), ('Montijo', 'quinta',  5),
+    ('Montijo', 'sexta',   1), ('Montijo', 'sexta',   5);
+
+-- Pessoas: 2 profissionais (Ana, Bruno) e 1 utente (Gonçalo).
+-- O Bruno também é utente (generalização sobreposta).
+INSERT INTO Pessoa (NIF, nomeCompleto, dataNascimento, genero, morada, pais, distrito, concelho, freguesia) VALUES
+    ('211111111', 'Ana Sofia Ribeiro',     '1980-03-14', 'F', 'Rua Almirante Cândido dos Reis, 20', 'Portugal', 'Setúbal', 'Montijo', 'Montijo e Afonsoeiro'),
+    ('212222222', 'Bruno Miguel Carvalho', '1990-07-02', 'M', 'Av. dos Pescadores, 5',              'Portugal', 'Setúbal', 'Montijo', 'Atalaia e Alto Estanqueiro-Jardia'),
+    ('221111111', 'Gonçalo Lopes',         '1965-02-25', 'M', 'Rua Bulhão Pato, 33',                'Portugal', 'Setúbal', 'Montijo', 'Montijo e Afonsoeiro');
+
+INSERT INTO Telefone (NIF, telefone) VALUES
+    ('211111111', '912345678'),
+    ('212222222', '923456789'),
+    ('221111111', '961111111'),
+    ('221111111', '212345678');
+INSERT INTO Email (NIF, email) VALUES
+    ('211111111', 'ana.ribeiro@nexumvitae.pt'),
+    ('212222222', 'bruno.carvalho@nexumvitae.pt'),
+    ('221111111', 'goncalo.lopes@gmail.com'),
+    ('221111111', 'glopes@empresa.pt');
+
+-- Profissionais (a médica tem especialidade principal - RIA3)
+INSERT INTO Profissional (NIF, numProfissional, numDocIdentificacao, nomeClinico, fotografia, estado, codCategoria, codEspecialidade) VALUES
+    ('211111111', 10001, '12345678', 'Dra. Ana Ribeiro',    'fotos/ana_ribeiro.jpg',    'Ativo', 1, 1),
+    ('212222222', 20001, '23456789', 'Enf. Bruno Carvalho', 'fotos/bruno_carvalho.jpg', 'Ativo', 2, NULL);
+
+INSERT INTO Atuar (NIF, codEspecialidade) VALUES
+    ('211111111', 2);
+
+INSERT INTO Vincular (NIF, localidade, tipoVinculo) VALUES
+    ('211111111', 'Montijo', 'contrato de trabalho'),
+    ('212222222', 'Montijo', 'contrato de trabalho');
+
+-- Turnos dentro do horário da clínica (RIA7)
+INSERT INTO Turno (NIF, localidade, diaSemana, horaInicio, horaFim) VALUES
+    ('211111111', 'Montijo', 'segunda', '09:00', '13:00'),
+    ('211111111', 'Montijo', 'quarta',  '09:00', '13:00'),
+    ('212222222', 'Montijo', 'segunda', '09:00', '17:00'),
+    ('212222222', 'Montijo', 'terça',   '09:00', '17:00');
+
+-- Utentes (o contacto de emergência não é o próprio utente - RIA2)
+INSERT INTO Utente (NIF, numSNS, grupoSanguineo, nomeContactoEmerg, parentContactoEmerg, telContactoEmerg, estiloVida) VALUES
+    ('221111111', '100000001', 'A+', 'Maria Lopes',   'esposa', '961222333', 'Sedentário, ex-fumador'),
+    ('212222222', '100000005', NULL, 'Sara Carvalho', 'irmã',   '926000111', NULL);
+
+INSERT INTO PrefLingCultural (NIF, prefLingCultural) VALUES
+    ('221111111', 'Prefere atendimento por médico do sexo masculino');
+
+INSERT INTO AnteCirurgico (NIF, anteCirurgico) VALUES
+    ('221111111', 'Apendicectomia (1990)'),
+    ('221111111', 'Cateterismo cardíaco (2019)');
+
+-- Histórico clínico do Gonçalo
+INSERT INTO Padecer (NIF, codICD11) VALUES
+    ('221111111', '5A11'),
+    ('221111111', 'BA00');
+
+INSERT INTO Herdar (NIF, codICD11, grauParent) VALUES
+    ('221111111', 'BA41', 'pai');
+
+INSERT INTO Reagir (NIF, codAlergenio, reacao) VALUES
+    ('221111111', 1, 'Urticária generalizada');
+
+-- Plano de vacinação (tem de existir antes de administrar - RIA20)
+INSERT INTO Planear (NIF, codVacina, dataPrevista) VALUES
+    ('221111111', 1, '2026-10-12'),
+    ('221111111', 2, '2026-10-05');
+
+-- Atos médicos (numAto 101-199)
+INSERT INTO AtoMedico (numAto, dataHoraAgenda, dataHoraAtend, estado, motivo, anamnese, pressaoArterial, freqCardiaca,
+                       temperatura, peso, altura, notasClinicas, planoTerapeutico, avaliacao, comentario,
+                       NIFUtente, localidade, codTipoCuidado, NIFPreferido, NIFResponsavel) VALUES
+    -- 101: consulta do Gonçalo com a Dra. Ana (segunda 5/10, turno dela 09-13)
+    (101, '2026-10-05 10:00', '2026-10-05 10:05', 'realizado', 'Controlo da diabetes e da tensão arterial',
+     'Refere cansaço e sede frequente', '145/90', 78, 36.6, 92.40, 1.75,
+     'Glicemia elevada; tensão acima do normal', 'Ajustar medicação e repetir análises em 3 meses',
+     'adorei', 'Médica muito atenciosa', '221111111', 'Montijo', 1, '211111111', '211111111'),
+    -- 102: ato de enfermagem do Gonçalo com o Enf. Bruno (segunda 12/10, turno dele 09-17)
+    (102, '2026-10-12 09:30', '2026-10-12 09:35', 'realizado', 'Vacinação e penso',
+     'Pequena ferida na mão', '138/88', 74, 36.5, 92.00, 1.75,
+     'Ferida limpa, sem sinais de infeção', 'Mudar penso daqui a 3 dias', 'gostei', NULL,
+     '221111111', 'Montijo', 5, NULL, '212222222'),
+    -- 103: consulta agendada do Bruno (como utente) com a Dra. Ana (segunda 16/11)
+    (103, '2026-11-16 11:00', NULL, 'agendado', 'Check-up anual', NULL, NULL, NULL,
+     NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+     '212222222', 'Montijo', 1, '211111111', NULL);
+
+INSERT INTO Medicamento (numAto, codMedicamento, nome, dosagem, posologia, durTratamento) VALUES
+    (101, 1, 'Metformina', '850 mg', '1 comprimido ao pequeno-almoço e ao jantar', 90),
+    (101, 2, 'Lisinopril', '10 mg',  '1 comprimido por dia, de manhã',             90);
+
+INSERT INTO Requisicao (numAto, numRequisicao, tipoExame, data, estado, resultado) VALUES
+    (101, 1, 'Análises ao sangue (glicemia e HbA1c)', '2026-10-05', 'realizada', 'HbA1c de 7,8%; glicemia em jejum de 160 mg/dL'),
+    (101, 2, 'Eletrocardiograma',                     '2026-10-05', 'realizada', 'Ritmo sinusal, sem alterações');
+
+INSERT INTO Anexo (numAto, numRequisicao, numAnexo, nomeFicheiro, tipo, ficheiro, dataUpload) VALUES
+    (101, 1, 1, 'analises_goncalo.pdf',    'relatório', 'anexos/2026/10/analises_goncalo.pdf', '2026-10-08 14:00'),
+    (101, 1, 2, 'boletim_laboratorio.pdf', 'relatório', 'anexos/2026/10/boletim_lab.pdf',      '2026-10-08 14:01'),
+    (101, 2, 1, 'ecg_goncalo.png',         'imagem',    'anexos/2026/10/ecg_goncalo.png',      '2026-10-05 11:00');
+
+INSERT INTO Diagnosticar (numAto, codICD11) VALUES
+    (101, '5A11'),
+    (101, 'BA00');
+
+INSERT INTO Executar (numAto, codProcedimento) VALUES
+    (102, 3),   -- administração de injetável
+    (102, 4);   -- penso simples
+
+INSERT INTO Administrar (numAto, codVacina, numDose, lote) VALUES
+    (101, 2, 1, 'TD2026-0451'),   -- tétano, 1.ª dose
+    (102, 1, 1, 'GR2026-1180');   -- gripe, 1.ª dose
 
 -- BLOCO 2 - CLÍNICA DE  Helena Nina (A52708)
 
